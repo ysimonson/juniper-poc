@@ -1,0 +1,15 @@
+# source: http://localhost:8080/graphql
+# timestamp: Tue May 01 2018 18:30:32 GMT+0700 (+07)
+
+schema {
+  query: RootQuery
+  mutation: RootMutation
+}
+
+type RootMutation {
+
+}
+
+type RootQuery {
+  bar: String!
+}
