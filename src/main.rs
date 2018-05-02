@@ -8,6 +8,16 @@ use iron::prelude::*;
 use juniper::EmptyMutation;
 use juniper_iron::GraphQLHandler;
 
+#[derive(GraphQLObject)]
+struct Foo {
+    value: i32
+}
+
+#[derive(GraphQLInputObject)]
+struct Bar {
+    value: i32
+}
+
 fn context_factory(_: &mut Request) -> () {
     ()
 }
@@ -15,17 +25,14 @@ fn context_factory(_: &mut Request) -> () {
 struct RootQuery;
 
 graphql_object!(RootQuery: () |&self| {
-    field bar() -> juniper::FieldResult<String> {
-        Ok("Bar".to_owned())
+    field foo() -> Foo {
+        Foo { value: 0 }
+    }
+
+    field bar() -> Bar {
+        Bar { value: 0 }
     }
 });
-
-struct RootMutation;
-
-graphql_object!(RootMutation: () |&self| {
-});
-
-pub type Schema = juniper::RootNode<'static, RootQuery, RootMutation>;
 
 fn main() {
     let mut mount = Mount::new();
@@ -33,7 +40,7 @@ fn main() {
     let graphql_endpoint = GraphQLHandler::new(
         context_factory,
         RootQuery,
-        RootMutation,
+        EmptyMutation::<()>::new(),
     );
 
     mount.mount("/graphql", graphql_endpoint);
